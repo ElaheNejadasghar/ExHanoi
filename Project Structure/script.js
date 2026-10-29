@@ -40,34 +40,168 @@ function diskCreator(number, className){
     }
 }
 
-// for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    if (n <= 0)
+        return;
+    hanoi(from, to, via, n - 1);
+    moves.push([from, to]);
+    hanoi(via, from, to, n - 1);
 }
 
+function gatherAll(m, target, loc, rodNames) {
+    if (m === 0)
+        return;
+    const p = loc[m];
+    if (p === target) {
+        gatherAll(m - 1, target, loc, rodNames);
+        return;
+    }
+    const r = rodNames.find(x => x !== p && x !== target);
+    gatherAll(m - 1, r, loc, rodNames);
+    moves.push([p, target]);
+    loc[m] = target;
+    gatherAll(m - 1, target, loc, rodNames);
+}
+
+
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    const total = 6 * n;
+    const loc = [null];
+    for (let s = 1; s <= total; s++) {
+        const k = s % 6;
+        if (k === 1)
+            loc[s] = start;
+        else if (k === 2 || k === 3)
+            loc[s] = aux;
+        else
+            loc[s] = end;
+    }
+    gatherAll(total, end, loc, [start, aux, end]);
+}
+
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    let src = A;
+    let spare = B;
+    for (let k = 1; k <= n; k++) {
+        const odd = (k % 2 === 1);
+        const dest = odd ? C : D;
+        const aux  = odd ? D : C;
+        hanoi(src, aux, spare, n - k);
+        moves.push([src, dest]);
+        [src, spare] = [spare, src];
+    }
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    const total = 5 * n;
+    const loc = [null];
+    for (let s = 1; s <= total; s++) {
+        const k = s % 5;
+        loc[s] = (k >= 1 && k <= 3) ? B : A;
+    }
+    gatherAll(total, C, loc, [A, B, C]);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    const adj = { [A]: [C, D], [B]: [C, D], [C]: [A, B], [D]: [A, B] };
+    const other = (rod, excluded) => adj[rod].find(t => t !== excluded);
+
+    function near(k, x, y) {
+        if (k === 0)
+            return;
+        const p = other(x, y);
+        near(k - 1, x, p);
+        moves.push([x, y]);
+        far(k - 1, p, y);
+    }
+
+    function far(k, x, z) {
+        if (k === 0)
+            return;
+        const [y, p] = adj[x];
+        near(k - 1, x, p);
+        moves.push([x, y]);
+        moves.push([y, z]);
+        near(k - 1, p, z);
+    }
+
+    near(n, A, C);
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    const line = [A, B, C, D];
+    const memo = new Map();
+
+    function plan(k, i, j) {
+        const key = k + ',' + i + ',' + j;
+        if (memo.has(key))
+            return memo.get(key);
+
+        let result;
+        if (k === 0 || i === j) {
+            result = { cost: 0, path: [], stack: [] };
+        } else {
+            const dir = i < j ? 1 : -1;
+            const path = [];
+            for (let r = i; r !== j; r += dir)
+                path.push(r);
+            path.push(j);
+            const steps = path.length - 1;
+
+            let best = new Map();
+            for (let a = 0; a < 4; a++) {
+                if (a === path[0] || a === path[1])
+                    continue;
+                best.set(a, { c: plan(k - 1, i, a).cost, seq: [a] });
+            }
+            for (let t = 2; t <= steps; t++) {
+                const nextBest = new Map();
+                for (let a = 0; a < 4; a++) {
+                    if (a === path[t - 1] || a === path[t])
+                        continue;
+                    let bestCost = Infinity;
+                    let bestSeq = null;
+                    for (const [pa, v] of best) {
+                        const c = v.c + plan(k - 1, pa, a).cost;
+                        if (c < bestCost) {
+                            bestCost = c;
+                            bestSeq = v.seq.concat(a);
+                        }
+                    }
+                    nextBest.set(a, { c: bestCost, seq: bestSeq });
+                }
+                best = nextBest;
+            }
+            let bestCost = Infinity;
+            let bestSeq = null;
+            for (const [pa, v] of best) {
+                const c = v.c + plan(k - 1, pa, j).cost;
+                if (c < bestCost) {
+                    bestCost = c;
+                    bestSeq = v.seq;
+                }
+            }
+            result = { cost: bestCost + steps, path: path, stack: bestSeq };
+        }
+        memo.set(key, result);
+        return result;
+    }
+
+    function run(k, i, j) {
+        if (k === 0 || i === j)
+            return;
+        const { path, stack } = plan(k, i, j);
+        let cur = i;
+        for (let t = 0; t < path.length - 1; t++) {
+            run(k - 1, cur, stack[t]);
+            cur = stack[t];
+            moves.push([line[path[t]], line[path[t + 1]]]);
+        }
+        run(k - 1, cur, j);
+    }
+
+    run(n, 0, 3);
 }
 
 function moveDisks(from, to){
@@ -111,8 +245,10 @@ function start_stop(){
     })
 }
 function nextMove(){
-    next.classList.remove("btn-disabeld");
-    prev.classList.remove("btn-disabeld");
+    if(moves.length < 1)
+        return;
+    next.classList.remove("btn-disabled");
+    prev.classList.remove("btn-disabled");
     const [from, to] = moves.shift();
     backMoves.push([from, to]);
     moveDisks(from, to);
@@ -207,11 +343,15 @@ exHanoi1.addEventListener("click", () => {
         alert("Enter A Number First")
         return
     }
-    const number = input.value;
+    const number = Number(input.value);
     console.log(number);
-    if((number < 0) || (number > 7)){
+    if(!Number.isInteger(number) || (number < 1) || (number > 7)){
         alert("Your Number Is Not In The Range")
-        location.reload();
+        return
+    }
+
+    if(number > 3){
+        alert("For this exercise 6n disks are used; please enter a number between 1 and 3 so the browser can handle the number of moves")
         return
     }
     
@@ -243,7 +383,7 @@ exHanoi2.addEventListener("click", () => {
         return;
     }
     const number = Number(input.value);
-    if (number < 1 || number > 7) {
+    if (!Number.isInteger(number) || number < 1 || number > 7) {
         alert("Your Number Is Not In The Range");
         return;
     }
@@ -265,8 +405,12 @@ exHanoi3.addEventListener("click", () => {
         return;
     }
     const number = Number(input.value);
-    if (number < 1 || number > 7) {
+    if (!Number.isInteger(number) || number < 1 || number > 7) {
         alert("Your Number Is Not In The Range");
+        return;
+    }
+    if (number > 4) {
+        alert("For this exercise 5n disks are used; please enter a number between 1 and 4 so the browser can handle the number of moves");
         return;
     }
     diskCreator(5 * number, "disk");
@@ -289,10 +433,9 @@ exHanoi4.addEventListener("click", () => {
         alert("Enter A Number First")
         return
     }
-    const number = input.value;
-    if ((number < 0) || (number > 7)) {
+    const number = Number(input.value);
+    if (!Number.isInteger(number) || (number < 1) || (number > 7)) {
         alert("Your Number Is Not In The Range")
-        location.reload();
         return
     }
     rods.D.classList.remove("noDisplay")
@@ -312,7 +455,7 @@ exHanoi5.addEventListener("click", () => {
         return;
     }
     const number = Number(input.value);
-    if (number < 1 || number > 7) {
+    if (!Number.isInteger(number) || number < 1 || number > 7) {
         alert("Your Number Is Not In The Range");
         return;
     }
@@ -325,4 +468,3 @@ exHanoi5.addEventListener("click", () => {
     exhanoi_5("A", "B", "C", "D", number);
     console.log(`Number Of Moves : ${moves.length}`);
 });
-

@@ -53,7 +53,15 @@ function hanoi(from, via, to, n) {
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
+    if (n===1){
+        moves.push([start, aux])
+        hanoi(aux, start, end, 3)
+    }else{
+        exHanoi_1(start, aux, end, n-1)
+        hanoi(end, aux, start, 6*(n-1))
+        hanoi(start, end, aux, 6*(n-1)+1)
+        hanoi(aux, start, end, 6*(n-1)+3)
+    }
     return
 }  
 

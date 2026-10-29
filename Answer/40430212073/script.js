@@ -78,7 +78,6 @@ function exHanoi_2(A, B, C, D, n) {
         moves.push([B, D])
         exHanoi_2(A, B, C, D, n-2)
     }
-    // alert("your function is not complete")
     return
 }
 

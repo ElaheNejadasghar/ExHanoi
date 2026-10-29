@@ -53,7 +53,7 @@ function hanoi(from, via, to, n) {
 }
 
 function exHanoi_1(start, aux, end, n) {
-    if (n===1){
+    if (n == 1){
         moves.push([start, aux])
         hanoi(aux, start, end, 3)
     }else{
@@ -66,9 +66,9 @@ function exHanoi_1(start, aux, end, n) {
 }  
 
 function exHanoi_2(A, B, C, D, n) {
-    if (n===1)
+    if (n == 1)
         moves.push([A, C])
-    else if (n===2){
+    else if (n == 2){
         moves.push([A, D])
         moves.push([A, C])
     }else{
@@ -83,7 +83,7 @@ function exHanoi_2(A, B, C, D, n) {
 }
 
 function exhanoi_3(A, B, C, n) {
-    if (n===1){
+    if (n==1){
         hanoi(B, C, A, 3)
         hanoi(A, B, C, 5)
     }
@@ -97,7 +97,7 @@ function exhanoi_3(A, B, C, n) {
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    if (n===1)
+    if (n==1)
         moves.push([A, C])
     else{
         exhanoi_4(A, B, D, C, n-1)
@@ -109,7 +109,23 @@ function exhanoi_4(A, B, C, D, n) {
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
+    if (n <= 0) return
+    if (n == 1){
+        moves.push([A, B])
+        moves.push([B, C])
+        moves.push([C, D])
+    }else{
+        exhanoi_5(A, B, C, D, n-1)
+        moves.push([A, B])
+        moves.push([B, C])
+        exhanoi_5(D, C, B, A, n-2)
+        moves.push([D, C])
+        moves.push([C, B])
+        moves.push([C, D])
+        moves.push([B, C])
+        moves.push([C, D])
+        exhanoi_5(A, B, C, D, n-2)
+    }
     return
 }
 

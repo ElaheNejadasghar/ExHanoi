@@ -83,7 +83,16 @@ function exHanoi_2(A, B, C, D, n) {
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
+    if (n===1){
+        hanoi(B, C, A, 3)
+        hanoi(A, B, C, 5)
+    }
+    else{
+        exhanoi_3(A, B, C, n-1)
+        hanoi(C, A, B, 5*(n-1))
+        hanoi(B, C, A, 5*(n-1)+3)
+        hanoi(A, B, C, 5*n)
+    }
     return
 }
 

@@ -40,34 +40,103 @@ function diskCreator(number, className){
     }
 }
 
-// for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    if (n === 0) return;
+    hanoi(from, to, via, n - 1);
+    moves.push([from, to]);
+    hanoi(via, from, to, n - 1);
+}
+
+function solveLayout(rodList, loc, count, target) {
+    function solve(r, to) {
+        if (r < 0) return;
+        const from = loc(r);
+        if (from === to) {
+            solve(r - 1, to);
+            return;
+        }
+        const other = rodList.find(x => x !== from && x !== to);
+        solve(r - 1, other);
+        moves.push([from, to]);
+        hanoi(other, from, to, r);
+    }
+    solve(count - 1, target);
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    n = Number(n);
+    const loc = r => {
+        const p = r % 6;
+        return p === 0 ? start : (p <= 2 ? aux : end);
+    };
+    solveLayout([start, aux, end], loc, 6 * n, end);
+}
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const target = k => ((n - k + 1) % 2 === 1 ? C : D);
+    function separate(k, src, aux) {
+        if (k === 0) return;
+        hanoi(src, C, aux, k - 1);
+        moves.push([src, target(k)]);
+        separate(k - 1, aux, src);
+    }
+    separate(n, A, B);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const loc = r => (r % 5 < 3 ? B : A);
+    solveLayout([A, B, C], loc, 5 * n, C);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const R = [A, B, C, D];
+    const twin = x => x ^ 1;
+    const otherSide = x => (x < 2 ? [2, 3] : [0, 1]);
+    const mv = (x, y) => moves.push([R[x], R[y]]);
+
+    function opp(k, x, y) {
+        if (k === 0) return;
+        const y2 = twin(y);
+        opp(k - 1, x, y2);
+        mv(x, y);
+        same(k - 1, y2, y);
+    }
+    function same(k, x, y) {
+        if (k === 0) return;
+        const [p, q] = otherSide(x);
+        opp(k - 1, x, p);
+        mv(x, q);
+        mv(q, y);
+        opp(k - 1, p, y);
+    }
+    opp(n, 0, 2);
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const R = [A, B, C, D];
+    function line(k, a, b) {
+        if (k === 0 || a === b) return;
+        const d = b > a ? 1 : -1;
+        let cur = a, stack = a;
+        while (cur !== b) {
+            const nxt = cur + d;
+            let t = -1;
+            for (let r = 0; r < 4; r++) {
+                if (r === cur || r === nxt) continue;
+                if (t === -1 || Math.abs(r - stack) < Math.abs(t - stack)) t = r;
+            }
+            line(k - 1, stack, t);
+            moves.push([R[cur], R[nxt]]);
+            cur = nxt;
+            stack = t;
+        }
+        line(k - 1, stack, b);
+    }
+    line(n, 0, 3);
 }
 
 function moveDisks(from, to){

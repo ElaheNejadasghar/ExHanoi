@@ -42,32 +42,70 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+     if (n <= 0) return;
+
+    hanoi(from, to, via, n - 1);
+
+    moves.push([from, to]);
+
+    hanoi(via, from, to, n - 1);
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+        hanoi(start, end, aux, n);
+        hanoi(aux, start, end, 3 * n);
 }  
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+     if (n <= 0) return;
+
+    if (n === 1) {
+        moves.push([A, D]);
+        return;
+    }
+
+    exHanoi_2(A, C, D, B, n - 2);
+
+    hanoi(A, C, D, 2);
+
+    exHanoi_2(B, A, C, D, n - 2);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+        hanoi(A, C, B, 2 * n);
+        hanoi(B, A, C, 5 * n);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+
+    if (n === 1) {
+        moves.push([A, D]);
+        return;
+    }
+
+    exhanoi_4(A, B, D, C, n - 2);
+
+    hanoi(A, B, D, 2);
+
+    exhanoi_4(C, A, B, D, n - 2);
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+
+    if (n === 1) {
+        moves.push([A, D]);
+        return;
+    }
+
+    exhanoi_5(A, C, D, B, n - 2);
+
+    hanoi(A, C, D, 2);
+
+    exhanoi_5(B, A, C, D, n - 2);
 }
 
 function moveDisks(from, to){
@@ -325,4 +363,3 @@ exHanoi5.addEventListener("click", () => {
     exhanoi_5("A", "B", "C", "D", number);
     console.log(`Number Of Moves : ${moves.length}`);
 });
-

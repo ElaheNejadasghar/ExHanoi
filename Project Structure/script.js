@@ -41,34 +41,219 @@ function diskCreator(number, className){
 }
 
 // for Move A --> B use this: moves.push([A, B])
+
 function hanoi(from, via, to, n) {
-    return
+    if (n <= 0) {
+        return;
+    }
+
+    hanoi(from, to, via, n - 1);
+
+    moves.push([from, to]);
+
+    hanoi(via, from, to, n - 1);
 }
+
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    n = Number(n);
+    const total = 6 * n;
+    const position = [];
+
+    for (let disk = 1; disk <= total; disk++) {
+        const r = disk % 6;
+
+        if (r === 0) {
+            position[disk] = start;
+        } else if (r === 4 || r === 5) {
+            position[disk] = aux;
+        } else {
+            position[disk] = end;
+        }
+    }
+
+    function solve(k, target) {
+        if (k === 0) {
+            return;
+        }
+
+        const source = position[k];
+
+        if (source === target) {
+            solve(k - 1, target);
+            return;
+        }
+
+        const spare = [start, aux, end].find(
+            rod => rod !== source && rod !== target
+        );
+
+        solve(k - 1, spare);
+
+        moves.push([source, target]);
+        position[k] = target;
+
+        solve(k - 1, target);
+    }
+
+    solve(total, end);
+}
+
+
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+
+    const position = Array(n + 1).fill(A);
+
+    function solve(k, target) {
+        if (k === 0) {
+            return;
+        }
+
+        const source = position[k];
+
+        if (source === target) {
+            solve(k - 1, target);
+            return;
+        }
+
+        const spare = [A, B, C, D].find(
+            rod => rod !== source && rod !== target
+        );
+
+        solve(k - 1, spare);
+
+        moves.push([source, target]);
+        position[k] = target;
+
+        solve(k - 1, target);
+    }
+
+    for (let k = n; k >= 1; k--) {
+        const target = k % 2 === 1 ? C : D;
+        solve(k, target);
+    }
 }
+
+
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const total = 5 * n;
+    const position = [];
+
+    for (let k = 1; k <= total; k++) {
+        const r = k % 5;
+
+        if (r === 1 || r === 2) {
+            position[k] = A;
+        } else {
+            position[k] = B;
+        }
+    }
+
+    function solve(k, target) {
+        if (k === 0) {
+            return;
+        }
+
+        const source = position[k];
+
+        if (source === target) {
+            solve(k - 1, target);
+            return;
+        }
+
+        const spare = [A, B, C].find(
+            rod => rod !== source && rod !== target
+        );
+
+        solve(k - 1, spare);
+
+        moves.push([source, target]);
+        position[k] = target;
+
+        solve(k - 1, target);
+    }
+
+    solve(total, C);
 }
+
+
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+
+    function solve(k, from, to) {
+        if (k === 0) {
+            return;
+        }
+
+        const left = [A, B];
+        const right = [C, D];
+
+        const fromLeft = left.includes(from);
+        const toLeft = left.includes(to);
+
+        if (fromLeft !== toLeft) {
+            const spare = fromLeft
+                ? left.find(rod => rod !== from)
+                : right.find(rod => rod !== from);
+
+            solve(k - 1, from, spare);
+            moves.push([from, to]);
+            solve(k - 1, spare, to);
+        } else {
+            const spare = fromLeft ? C : A;
+
+            solve(k - 1, from, to);
+            moves.push([from, spare]);
+            solve(k - 1, to, from);
+            moves.push([spare, to]);
+            solve(k - 1, from, to);
+        }
+    }
+
+    solve(n, A, C);
 }
 
+
+
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+
+    const rodsList = [A, B, C, D];
+
+    function solve(k, from, to) {
+        if (k === 0 || from === to) {
+            return;
+        }
+
+        const fromIndex = rodsList.indexOf(from);
+        const toIndex = rodsList.indexOf(to);
+
+        const step = fromIndex < toIndex ? 1 : -1;
+        const nextRod = rodsList[fromIndex + step];
+
+        // Move the smaller disks out of the way
+        const spare = rodsList.find(
+            rod => rod !== from && rod !== nextRod
+        );
+
+        solve(k - 1, from, spare);
+
+        moves.push([from, nextRod]);
+
+        solve(k - 1, spare, nextRod);
+
+        // Continue toward the destination
+        solve(k, nextRod, to);
+    }
+
+    solve(n, A, D);
 }
+
 
 function moveDisks(from, to){
     const fromEl = rods[from];

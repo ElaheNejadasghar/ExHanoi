@@ -42,26 +42,184 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
+    if (n == 0)
+        return
+
+    if (n == 1) {
+        moves.push([from, to]);
+    }
+
+    else {
+        hanoi(from, to, via, n - 1);
+        moves.push([from, to]);
+        hanoi(via, from, to, n - 1);
+    }
+
     return
 }
-
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    if (n == 0)
+        return
+
+    if (n == 1) {
+        moves.push([start, end]);
+        moves.push([aux, start]);
+        moves.push([end, start]);
+        moves.push([aux, end])
+        moves.push([start, aux]);
+        moves.push([start, end]);
+        moves.push([aux, end]);
+        
+    }
+    else {
+        exHanoi_1(start, aux, end, n - 1);
+           
+        moves.push([start, aux]);
+        hanoi(end, start, aux, 3 * n);               //4, 5 and 6 identify as  bigger than "9" pls be kind to them. 
+        
+        hanoi(aux, start, end, (4 * n) +1);     
+       
+    }
+   
+  return
+}
+
+   
+
+    
+let firstTime = true;           // used in exHanoi_2
+let firstTime2nd = true;           // used in exHanoi_2
+
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
+    
+    if (n == 0) 
+        return
+
+    if (firstTime) {
+  
+        moves.push([A, C]);    // only runs once to setup the rods
+        moves.push([A, D]);
+        moves.push([A, B]);
+
+        firstTime = false;
+    }
+
+    if (n == 1) {
+        moves.push([C, B]);
+        moves.push([B, A]);
+        moves.push([B, C]);
+        moves.push([A, C]);
+        moves.push([A, B]);
+
+   }
+
+    else {
+        exHanoi_2(A, B, C, D, n - 1);                               
+        moves.push([D,B]);                                         
+        moves.push([A,D]);                                         
+        moves.push([B,D]);                                         
+        exHanoi_2(A, B, D, C, n - 1);            
+    }
+
+  /*  if (n % 2 == 0) {
+            hanoi(D, B, A, n);                       these lines should run after the function is called in the main function(once). 
+            hanoi(C, B, D, n);                         to swap D,C disks for the even case.
+            hanoi(A, B, C, n);                           it will execute inside the recursion loop here and might give wrong results!!!!
+        }
+        */
     return
 }
 
+
+let i = 0;   // used as recursion counter in exhanoi_3.
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
+    
+    if (n == 0)
+        return
+
+    if (n == 1) {
+        hanoi(B, C, A, 3 + i);
+
+    }
+
+
+    else {
+        exhanoi_3(A, B, C, n - 1);                 //it theoretically works but its slow asf. 
+
+        if (i < 20) {                             //to reduce the T(n) 
+            i = i + 2;
+            hanoi(A, C, B, 3 + i);
+            i = i + 3;
+            exhanoi_3(A, B, C, n - 1);
+        }  
+    }
+
+    // hanoi(A, B, C, 5 * n);                 //should be called in main after calling the function.
+    
+    //--------------------------------------------------------------------------------------------------------
+
+    /*   if (n == 1) {
+            moves.push([B, A]);
+            moves.push([B, C]);
+            moves.push([A, C]);
+            moves.push([B, A]);
+            moves.push([C, B]);
+            moves.push([C, A]);
+            moves.push([B, A]);
+        }                                               //alternative algo
+
+        else {
+            exhanoi_3(A, B, C, n - 1);
+            if (i < 5)
+                i = i + 1;
+            hanoi(A,C,B,n + 3*i);
+            exhanoi_3(B, A, C, n - );
+            
+
+        }
+        // hanoi(A, B, C, n);                   //shpuld be implemented after the functions is called in manin.
+        */
+    
     return
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
+    if (n == 0)
+        return false;
+
+    if (n == 1) {
+        moves.push([A, C]);
+        moves.push([A, D]);
+        moves.push([D, B]);
+        moves.push([C, B]);
+
+        return false;
+    }
+
+    else {
+
+        if (exhanoi_4(A, B, C, D, n - 1)) {
+            return true;           
+        }
+
+        if (exhanoi_4(A, D, C, D, n - 1)) {
+            return true;
+
+        
+        }
+
+        moves.push([A, C]);
+        moves.push([D, A]);
+        moves.push([D, C]);
+        moves.push([A, C]);
+        moves.push([B, D]);
+        moves.push([B, C]);
+        moves.push([D, C]);
+
+        return true;
+    }
+    
     return
 }
 

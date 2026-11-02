@@ -40,6 +40,10 @@ function diskCreator(number, className){
     }
 }
 
+
+
+                                                            //Pedram Mehrdad 40230112126
+
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
     if (n == 0)
@@ -132,7 +136,7 @@ function exHanoi_2(A, B, C, D, n) {
 }
 
 
-let i = 0;   // used as recursion counter in exhanoi_3.
+let i = 0;                            // used as recursion counter in exhanoi_3.
 function exhanoi_3(A, B, C, n) {
     
     if (n == 0)
@@ -199,18 +203,16 @@ function exhanoi_4(A, B, C, D, n) {
 
     else {
 
-        if (exhanoi_4(A, B, C, D, n - 1)) {
+        if (exhanoi_4(A, B, C, D, n - 1)) 
             return true;           
-        }
+        
 
-        if (exhanoi_4(A, D, C, D, n - 1)) {
-            return true;
-
-                                                            //NEEDS NORMAL HANOI IMPLENTATION FOR N=1 ONLY(B to C).
-        }
+        if (exhanoi_4(A, D, C, D, n - 1)) 
+            return true;                            //NEEDS NORMAL HANOI IMPLENTATION FOR N=1 ONLY(B to C)??.           
+        
 
         moves.push([A, C]);
-        moves.push([D, A]);
+        moves.push([D, A]);                                 
         moves.push([D, C]);
         moves.push([A, C]);
         moves.push([B, D]);
@@ -223,10 +225,66 @@ function exhanoi_4(A, B, C, D, n) {
     return
 }
 
+
+// let firsttime = false;               //used as a first time gate in exhanoi_5 
+
 function exhanoi_5(A, B, C, D, n) {
-        if(n == 0)
+    if (n <= 0) 
+        return
+    
+    else{
+    exhanoi_5(A,B,C,D,n-1)
+    moves.push([A,B])
+    moves.push([B,C])
+    
+    exhanoi_5(D,C,B,A,n-1)
+    moves.push([C,D])
+    
+    exhanoi_5(A,B,C,D,n-1)
+    }
+    return
+
+//_______________________________________________________________________________________________
+       /* if(n == 0)
             return
         if(n==1){
+            moves.push([A,B]);
+            moves.push([B,C]);
+            moves.push([A,B]);
+            moves.push([C,B]);
+        }
+
+        else{
+            exhanoi_5(A,B,C,D,n-1);                     //second algo
+            moves.push([B,A]);                          //too confusing
+            moves.push([B,C]);                          //can be salvaged w/ more work, maybe?       
+            
+            if(firsttime){
+                moves.push([D,C]);
+                moves.push([C,B]);
+                moves.push([C,D]);
+                moves.push([C,B]);
+                moves.push([B,A]);
+                moves.push([B,C]);
+                
+            }
+
+            firsttime = true;
+
+            moves.push([C,D]);
+            moves.push([A,B]);
+            moves.push([B,C]);
+            moves.push([C,D]);
+            exhanoi_5(A,B,C,D,n-1);
+            
+        }
+
+        */
+
+//______________________________________________________________________________________________
+
+
+        /* if(n==1){
             moves.push([A,B]);
             moves.push([B,C]);
             moves.push([A,B]);
@@ -236,17 +294,21 @@ function exhanoi_5(A, B, C, D, n) {
             moves.push([C,D]);
         }
         else{
-            exhanoi_5(A,B,C,D,n-1);
-            moves.push([A,B]);
+            exhanoi_5(A,B,C,D,n-1);                 //third algo
+            moves.push([A,B]);                      //dosen't work
             moves.push([B,C]);
             moves.push([C,D]);
+            moves.push([A,B]);
+            moves.push([B,C]);
+        
             exhanoi_5(D,C,B,A,n-1);
        
             
-        }
-
-
-    return
+        } 
+            return
+         */ 
+//_______________________________________________________________________________________________
+        
 }
 
 function moveDisks(from, to){

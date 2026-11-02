@@ -42,32 +42,83 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    if(n==1)
+        moves.push([from,to]);
+    else{
+        hanoi(from,to,via,n-1);
+        moves.push([from,to]);
+        hanoi(via,from,to,n-1);
+    }
+    return;
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    if(n==1){
+        moves.push([aux,end]);
+        moves.push([start,end]);
+        hanoi(end,aux,start,2)
+        moves.push([aux,end]);
+        hanoi(start,aux,end,2);
+    }
+    else{
+        exHanoi_1(start,aux,end,n-1);
+        hanoi(end,aux,start,6*n-6);
+        moves.push([aux,end]);
+        hanoi(start,end,aux,6*n-6);
+        moves.push([start,end]);
+        hanoi(end,aux,start,2);
+        hanoi(aux,end,start,6*n-6);
+        moves.push([aux,end]);
+        hanoi(start,aux,end,6*n-4);
+    }
+}
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    hanoi(A,B,D,n);
+    hanoi(C,B,A,n);
+    hanoi(D,B,C,n);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    if(n==1){
+        moves.push([A,C]);
+        hanoi(B,A,C,2);
+    }
+    else{
+        exhanoi_3(A,B,C,n-1);
+        hanoi(C,A,B,3*n-3);
+        moves.push([A,C]);
+        hanoi(B,A,C,3*n-1);
+    }
 }
 
+// before coding read about the extra rules for this ExHanoi
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if(n==1){
+        moves.push([A,C]);
+    }
+    else{
+        exhanoi_4(A, B, D, C, n-1);
+        moves.push([A,C]);
+        exhanoi_4(D, C, B, A, n-1);
+        exhanoi_4(B, A, C, D, n-1);
+    }
 }
 
+// before coding read about the extra rules for this ExHanoi
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if (n==1) {
+        exhanoi_4(C,A,B,D,3);
+        moves.push([A,C]);
+        exhanoi_4(B,D,C,A,5);
+    }
+    else{
+        exhanoi_5(A, B, C, D, n-1);
+        exhanoi_4(C,A,B,D,6*n-3);
+        moves.push([A,C]);
+        exhanoi_4(B,D,C,A,6*n-1);
+    }
+
 }
 
 function moveDisks(from, to){
@@ -214,7 +265,7 @@ exHanoi1.addEventListener("click", () => {
         location.reload();
         return
     }
-    
+
     diskCreator(6*number, "disk");
 
     let index = 6*number - 1;
@@ -222,66 +273,71 @@ exHanoi1.addEventListener("click", () => {
         rods.A.appendChild(disks[index])
         index--;
         for(let j = 0; j < 2; j++){
-            rods.B.appendChild(disks[index])        
+            rods.B.appendChild(disks[index])
             index--;
         }
         for(let j = 0; j < 3; j++){
-            rods.C.appendChild(disks[index])        
+            rods.C.appendChild(disks[index])
             index--;
         }
     }
     buttonsWorks()
     exHanoi_1('A', 'B', 'C', number);
     console.log(`Number Of Moves : ${moves.length}`);
-    
+
+})
+//.............................ExHanoi Number 2..................................\\
+exHanoi2.addEventListener("click",() => {
+    if(input.value === ""){
+        alert("Enter A Number First")
+        return
+    }
+    const number = input.value;
+    if(number === null)
+        return
+    if((number < 0) || (number > 7)){
+        alert("Your Number Is Not In The Range")
+        location.reload();
+        return
+    }
+
+    rods.D.classList.remove("noDisplay")
+    diskCreator(number, "disk")
+
+    for(let index = number-1; index >= 0; index--)
+        rods.A.appendChild(disks.pop());
+    diskCreator(number, "disk")
+
+    for (let index = number - 1; index >= 0; index--)
+        rods.C.appendChild(disks.pop());
+    buttonsWorks()
+    exHanoi_2('A', 'B', 'C', 'D', number)
+    console.log(`Number Of Moves : ${moves.length}`);
 })
 
-//.............................ExHanoi Number 2..................................\\
-exHanoi2.addEventListener("click", () => {
-    if (input.value === "") {
-        alert("Enter A Number First");
-        return;
-    }
-    const number = Number(input.value);
-    if (number < 1 || number > 7) {
-        alert("Your Number Is Not In The Range");
-        return;
-    }
-    rods.D.classList.remove("noDisplay");
-    diskCreator(number, "disk");
-    for (let index = number - 1; index >= 0; index--) {
-        rods.A.appendChild(disks.pop());
-    }
-    buttonsWorks();
-    exHanoi_2("A", "B", "C", "D", number);
-    console.log(`Number Of Moves : ${moves.length}`);
-});
-
-
 //.............................ExHanoi Number 3..................................\\
-exHanoi3.addEventListener("click", () => {
-    if (input.value === "") {
-        alert("Enter A Number First");
-        return;
+exHanoi3.addEventListener("click", ()=> {
+    if(input.value === ""){
+        alert("Enter A Number First")
+        return
     }
-    const number = Number(input.value);
-    if (number < 1 || number > 7) {
-        alert("Your Number Is Not In The Range");
-        return;
+    const number = input.value;
+    if((number < 0) || (number > 7)){
+        alert("Your Number Is Not In The Range")
+        location.reload();
+        return
     }
-    diskCreator(5 * number, "disk");
-    for (let index = 5 * number - 1; index >= 0; index-=5) {
-        rods.B.appendChild(disks[index]);
-        rods.B.appendChild(disks[index-1]);
-        rods.B.appendChild(disks[index-2]);
-        rods.A.appendChild(disks[index-3]);
-        rods.A.appendChild(disks[index-4]);
-    }
-    buttonsWorks();
-    exhanoi_3("A", "B", "C", number);
-    console.log(`Number Of Moves : ${moves.length}`);
-});
+    diskCreator(3*number, "disk");
 
+    for(let index = 3*number - 1; index  >= 0; index-= 3){
+        rods.B.appendChild(disks[index])
+        rods.B.appendChild(disks[index-1])
+        rods.A.appendChild(disks[index-2])
+    }
+    buttonsWorks()
+    exhanoi_3('A', 'B', 'C', number)
+    console.log(`Number Of Moves : ${moves.length}`);
+})
 
 //.............................ExHanoi Number 4..................................\\
 exHanoi4.addEventListener("click", () => {
@@ -308,21 +364,32 @@ exHanoi4.addEventListener("click", () => {
 //.............................ExHanoi Number 5..................................\\
 exHanoi5.addEventListener("click", () => {
     if (input.value === "") {
-        alert("Enter A Number First");
-        return;
+        alert("Enter A Number First")
+        return
     }
-    const number = Number(input.value);
-    if (number < 1 || number > 7) {
-        alert("Your Number Is Not In The Range");
-        return;
+    const number = input.value;
+    if ((number < 0) || (number > 7)) {
+        alert("Your Number Is Not In The Range")
+        location.reload();
+        return
     }
-    rods.D.classList.remove("noDisplay");
-    diskCreator(number, "disk");
-    for (let index = number - 1; index >= 0; index--) {
-        rods.A.appendChild(disks.pop());
-    }
-    buttonsWorks();
-    exhanoi_5("A", "B", "C", "D", number);
-    console.log(`Number Of Moves : ${moves.length}`);
-});
+    rods.D.classList.remove("noDisplay")
+    diskCreator(6 * number, "disk");
 
+    let index = 6 * number - 1;
+    while (index >= 0) {
+        for (let j = 0; j < 3; j++) {
+            rods.C.appendChild(disks[index])
+            index--;
+        }
+        for (let j = 0; j < 2; j++) {
+            rods.B.appendChild(disks[index])
+            index--;
+        }
+        rods.A.appendChild(disks[index])
+        index--;
+    }
+    buttonsWorks()
+    exhanoi_5('A', 'B', 'C', 'D', number)
+    console.log(`Number Of Moves : ${moves.length}`);
+})

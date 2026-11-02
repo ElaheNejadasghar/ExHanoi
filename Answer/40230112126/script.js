@@ -206,7 +206,7 @@ function exhanoi_4(A, B, C, D, n) {
         if (exhanoi_4(A, D, C, D, n - 1)) {
             return true;
 
-        
+                                                            //NEEDS NORMAL HANOI IMPLENTATION FOR N=1 ONLY(B to C).
         }
 
         moves.push([A, C]);
@@ -224,7 +224,28 @@ function exhanoi_4(A, B, C, D, n) {
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
+        if(n == 0)
+            return
+        if(n==1){
+            moves.push([A,B]);
+            moves.push([B,C]);
+            moves.push([A,B]);
+            moves.push([C,B]);
+            moves.push([B,A]);
+            moves.push([B,C]);
+            moves.push([C,D]);
+        }
+        else{
+            exhanoi_5(A,B,C,D,n-1);
+            moves.push([A,B]);
+            moves.push([B,C]);
+            moves.push([C,D]);
+            exhanoi_5(D,C,B,A,n-1);
+       
+            
+        }
+
+
     return
 }
 

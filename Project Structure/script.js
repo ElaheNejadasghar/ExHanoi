@@ -42,31 +42,105 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
+    if (n <= 0) return
+    if (n == 1) {
+        moves.push([from, to])
+    }
+    else {
+        hanoi(from, to, via, n - 1)
+        moves.push([from, to])
+        hanoi(via, from, to, n - 1)
+    }
     return
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
+    if (n <= 0) return
+
+    if (n == 1){
+        moves.push([aux, start])
+        moves.push([aux, end])
+        moves.push([start, end])
+        moves.push([start, end])
+        moves.push([start, end])
+    }
+    else {
+        moves.push ([aux, start])
+        hanoi(end, aux, start, n-1)
+        moves.push([aux, end])
+        hanoi(start, end, aux, n-1)
+        moves.push([start, end])
+        moves.push([start, end])
+        hanoi(aux, start, end, n-1)
+        exHanoi_1(start, aux, end, n-1)
+    }
     return
 }  
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
+    if (n == 0 ) return
+    if (n == 1){
+        moves.push([A,C])
+        return
+    }
+    if( n == 2){
+        moves.push([A, D])
+        exHanoi_1(A, B, C, D, 1)
+        return
+    }
+    if ( n == 3){
+        exHanoi_2(A, B, C, D, 2)
+        moves.push([C, B])
+        moves.push([A, C])
+        moves.push([B, C])
+        return
+    }
+    else {
+        exHanoi_2(A, B, C, D, n-2)
+        hanoi(C, A, B, (n-2)/2)
+        moves.push([A, C])
+        hanoi(B, A, C, (n-2)/2)
+        hanoi(D, A, B, (n-2)/2)
+        moves.push([A, D])
+        hanoi(B, A, D, (n-2)/2)
+    }
     return
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
+    if (n == 0)
+        return
+    if (n == 1){
+        hanoi(B, C, A, 3)
+        hanoi(A, B, C, 5)
+    }
+    else{
+        exhanoi_3(A, B, C, n-1)
+        hanoi(C, A, B, (n-1)*5)
+        hanoi(B, C, A, (5*n)-2)
+        hanoi(A, B, C, 5*n)
+    }
     return
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
+    if (n <= 0) return
+    exhanoi_4(A,B,C,D,n-1)
+    hanoi(C,D,B,n-1)
+    moves.push([A,D])
+    moves.push([D,C])
+    hanoi(B,D,C,n-1)
     return
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
+    if (n <= 0) return
+    exhanoi_5(A,B,C,D,n-1)
+    moves.push([A,B])
+    moves.push([B,C])
+    exhanoi_5(D,C,B,A,n-1)
+    moves.push([C,D])
+    exhanoi_5(A,B,C,D,n-1)
     return
 }
 

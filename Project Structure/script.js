@@ -42,32 +42,72 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    if (n <= 0) return;
+    hanoi(from, to, via, n - 1);
+    moves.push([from, to]);
+    hanoi(via, from, to, n - 1);
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    if (n <= 0) return;
+
+    exHanoi_1(start, aux, end, n - 1);
+    hanoi(end, start, aux, 6 * (n - 1));
+    moves.push([start, end]);
+    hanoi(aux, start, end, 6 * (n - 1));
+    moves.push([aux, start]);
+    hanoi(end, aux, start, 6 * (n - 1) + 1);
+    moves.push([aux, end]);
+    hanoi(start, aux, end, 6 * (n - 1) + 2);
+}
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+    hanoi(A, C, B, n - 1);
+    moves.push([A, C]);
+    hanoi(B, C, A, n - 1);
+    exHanoi_2(A, B, D, C, n - 1);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
-}
+    if (n <= 0) return;
 
+    exhanoi_3(A, B, C, n - 1);
+    hanoi(C, B, A, 5 * (n - 1));
+    moves.push([B, C]);
+    hanoi(A, B, C, 5 * (n - 1));
+    moves.push([B, A]);
+    hanoi(C, B, A, 5 * (n - 1) + 1);
+    moves.push([B, C]);
+    hanoi(A, B, C, 5 * (n - 1) + 2);
+    moves.push([A, B]);
+    hanoi(C, A, B, 5 * (n - 1) + 3);
+    moves.push([A, C]);
+    hanoi(B, A, C, 5 * (n - 1) + 4);
+}
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if(n<=0){
+        return;
+    }
+     exhanoi_4(A,B,D,C,n-1);
+     moves.push([A,C]);
+     if(n>1){  
+        exhanoi_4(D,C,A,B,n-2);
+        moves.push([D,B]);
+        moves.push([B,C]);
+        exhanoi_4(A,B,C,D,n-2);
+     }
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    if (n <= 0) return;
+
+    exhanoi_5(A, B, C, D, n - 1);
+    moves.push([A, B]);
+    moves.push([B, C]);
+    exhanoi_5(D, C, B, A, n - 1);
+    moves.push([C, D]);
+    exhanoi_5(A, B, C, D, n - 1);
 }
 
 function moveDisks(from, to){

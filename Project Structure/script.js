@@ -42,32 +42,90 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    if (n === 0) return;
+    hanoi(from, to, via, n - 1);
+    moves.push([from, to]);
+    hanoi(via, from, to, n - 1);
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const rods = [start, aux, end];
+    const pos = [];
+    for (let s = 1; s <= 6 * n; s++) {
+        const l = (s - 1) % 6;
+        pos[s] = l === 0 ? start : l < 3 ? aux : end;
+    }
+
+    function solve(s, to) {
+        if (s === 0) return;
+        const from = pos[s];
+        if (from === to) return solve(s - 1, to);
+        const other = rods.find(r => r !== from && r !== to);
+        solve(s - 1, other);
+        moves.push([from, to]);
+        pos[s] = to;
+        solve(s - 1, to);
+    }
+
+    solve(6 * n, end);
 }  
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    let from = A;
+    let temp = B;
+    for (let k = 1; k <= n; k++) {
+        hanoi(from, C, temp, n - k);
+        moves.push([from, k % 2 === 1 ? C : D]);
+        [from, temp] = [temp, from];
+    }
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+   n = Number(n);
+    const rods = [A, B, C];
+    const pos = [];
+    for (let s = 1; s <= 5 * n; s++) {
+        pos[s] = (s - 1) % 5 < 3 ? B : A;
+    }
+
+    function solve(s, to) {
+        if (s === 0) return;
+        const from = pos[s];
+        if (from === to) return solve(s - 1, to);
+        const other = rods.find(r => r !== from && r !== to);
+        solve(s - 1, other);
+        moves.push([from, to]);
+        pos[s] = to;
+        solve(s - 1, to);
+    }
+
+    solve(5 * n, C);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    if (n === 0) return;
+    exhanoi_4(A, B, D, C, n - 1);
+    moves.push([A, C]);
+    if (n > 1) {
+        exhanoi_4(D, C, B, A, n - 2);
+        moves.push([D, A]);
+        moves.push([A, C]);
+        exhanoi_4(B, A, C, D, n - 2);
+    }
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    if (n === 0) return;
+    exhanoi_5(A, B, C, D, n - 1);
+    moves.push([A, B]);
+    exhanoi_5(D, C, B, A, n - 1);
+    moves.push([B, C]);
+    moves.push([C, D]);
+    exhanoi_5(A, B, C, D, n - 1);
 }
 
 function moveDisks(from, to){

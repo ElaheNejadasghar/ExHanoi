@@ -42,32 +42,188 @@ function diskCreator(number, className){
 
 // for Move A --> B use this: moves.push([A, B])
 function hanoi(from, via, to, n) {
-    return
+    n = Number(n);
+    if (n <= 0)
+        return;
+
+    hanoi(from, to, via, n - 1);
+    moves.push([from, to]);
+    hanoi(via, from, to, n - 1);
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    n = Number(n);
+    const totalDisks = 6 * n;
+    const rods = [start, aux, end];
+
+    const diskPositions = [null];
+    for (let disk = 1; disk <= totalDisks; disk++) {
+        const position = (disk - 1) % 6;
+        diskPositions.push(position === 0 ? start : (position < 3 ? aux : end));
+    }
+
+    const getHelperRod = (rod1, rod2) => rods.find(rod => rod !== rod1 && rod !== rod2);
+
+    let totalMoves = 0, targetRod = end;
+    for (let disk = totalDisks; disk >= 1; disk--) {
+        if (diskPositions[disk] !== targetRod) {
+            totalMoves += Math.pow(2, disk - 1);
+            targetRod = getHelperRod(diskPositions[disk], targetRod);
+        }
+    }
+
+    if (totalMoves > 2500000) {
+        alert("This number needs too many moves (" + totalMoves.toLocaleString() + "). Please enter a smaller number.");
+        location.reload();
+        return;
+    }
+
+    function gather(disksCount, target) {
+        if (disksCount === 0)
+            return;
+
+        if (diskPositions[disksCount] === target) {
+            gather(disksCount - 1, target);
+            return;
+        }
+
+        const sourceRod = diskPositions[disksCount];
+        const helperRod = getHelperRod(sourceRod, target);
+
+        gather(disksCount - 1, helperRod);
+        moves.push([sourceRod, target]);
+        hanoi(helperRod, sourceRod, target, disksCount - 1);
+    }
+
+    gather(totalDisks, end);
+}
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+
+    function separate(disksCount, source, targetX, targetY, helper) {
+        if (disksCount === 0)
+            return;
+
+        separate(disksCount - 1, source, targetY, helper, targetX);
+        moves.push([source, targetX]);
+        hanoi(helper, source, targetX, Math.floor((disksCount - 1) / 2));
+    }
+
+    separate(n, A, C, D, B);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const totalDisks = 5 * n;
+    const rods = [A, B, C];
+
+    const diskPositions = [null];
+    for (let disk = 1; disk <= totalDisks; disk++)
+        diskPositions.push(((disk - 1) % 5) < 3 ? B : A);
+
+    const getHelperRod = (rod1, rod2) => rods.find(rod => rod !== rod1 && rod !== rod2);
+
+    let totalMoves = 0, targetRod = C;
+    for (let disk = totalDisks; disk >= 1; disk--) {
+        if (diskPositions[disk] !== targetRod) {
+            totalMoves += Math.pow(2, disk - 1);
+            targetRod = getHelperRod(diskPositions[disk], targetRod);
+        }
+    }
+
+    if (totalMoves > 2500000) {
+        alert("This number needs too many moves (" + totalMoves.toLocaleString() + "). Please enter a smaller number.");
+        location.reload();
+        return;
+    }
+
+    function gather(disksCount, target) {
+        if (disksCount === 0)
+            return;
+
+        if (diskPositions[disksCount] === target) {
+            gather(disksCount - 1, target);
+            return;
+        }
+
+        const sourceRod = diskPositions[disksCount];
+        const helperRod = getHelperRod(sourceRod, target);
+
+        gather(disksCount - 1, helperRod);
+        moves.push([sourceRod, target]);
+        hanoi(helperRod, sourceRod, target, disksCount - 1);
+    }
+
+    gather(totalDisks, C);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const rodsCycle = [A, C, B, D];
+
+    function go(disksCount, sourceIndex, targetIndex) {
+        if (disksCount === 0 || sourceIndex === targetIndex)
+            return;
+
+        if ((targetIndex - sourceIndex + 4) % 4 === 2) {
+            const firstMiddle = (sourceIndex + 1) % 4;
+            const secondMiddle = (sourceIndex + 3) % 4;
+
+            go(disksCount - 1, sourceIndex, secondMiddle);
+            moves.push([rodsCycle[sourceIndex], rodsCycle[firstMiddle]]);
+            moves.push([rodsCycle[firstMiddle], rodsCycle[targetIndex]]);
+            go(disksCount - 1, secondMiddle, targetIndex);
+        } else {
+            const helperIndex = ((targetIndex - sourceIndex + 4) % 4 === 1)
+                ? (sourceIndex + 3) % 4
+                : (sourceIndex + 1) % 4;
+
+            go(disksCount - 1, sourceIndex, helperIndex);
+            moves.push([rodsCycle[sourceIndex], rodsCycle[targetIndex]]);
+            go(disksCount - 1, helperIndex, targetIndex);
+        }
+    }
+
+    go(n, 0, 1);
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const rodsLine = [A, B, C, D];
+
+    function go(disksCount, sourceIndex, targetIndex) {
+        if (disksCount === 0 || sourceIndex === targetIndex)
+            return;
+
+        const direction = targetIndex > sourceIndex ? 1 : -1;
+        let towerIndex = sourceIndex;
+
+        for (let currentIndex = sourceIndex; currentIndex !== targetIndex; currentIndex += direction) {
+            const nextIndex = currentIndex + direction;
+
+            if (disksCount > 1) {
+                let helperIndex = -1;
+
+                for (let rodIndex = 0; rodIndex < 4; rodIndex++) {
+                    if (rodIndex === currentIndex || rodIndex === nextIndex)
+                        continue;
+
+                    if (helperIndex === -1 || Math.abs(rodIndex - towerIndex) < Math.abs(helperIndex - towerIndex))
+                        helperIndex = rodIndex;
+                }
+
+                go(disksCount - 1, towerIndex, helperIndex);
+                towerIndex = helperIndex;
+            }
+
+            moves.push([rodsLine[currentIndex], rodsLine[nextIndex]]);
+        }
+
+        go(disksCount - 1, towerIndex, targetIndex);
+    }
+
+    go(n, 0, 3);
 }
 
 function moveDisks(from, to){

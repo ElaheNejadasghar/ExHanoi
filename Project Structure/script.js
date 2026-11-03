@@ -41,33 +41,168 @@ function diskCreator(number, className){
 }
 
 // for Move A --> B use this: moves.push([A, B])
+
 function hanoi(from, via, to, n) {
-    return
+    n = Number(n);
+    if (n <= 0)
+        return;
+    hanoi(from, to, via, n - 1);   
+    moves.push([from, to]);       
+    hanoi(via, from, to, n - 1);   
 }
 
 function exHanoi_1(start, aux, end, n) {
-    alert("your function is not complete")
-    return
-}  
+    n = Number(n);
+    const total = 6 * n;
+    const rodsList = [start, aux, end];
+
+   const where = [null];
+    for (let k = 1; k <= total; k++) {
+        const slot = (k - 1) % 6;
+        where.push(slot === 0 ? start : (slot < 3 ? aux : end));
+    }
+
+    const other = (a, b) => rodsList.find(r => r !== a && r !== b);
+
+    let count = 0, t = end;
+    for (let k = total; k >= 1; k--) {
+        if (where[k] !== t) {
+            count += Math.pow(2, k - 1);
+            t = other(where[k], t);
+        }
+    }
+    if (count > 2500000) {
+        alert("This number needs too many moves (" + count.toLocaleString() + "). Please enter a smaller number.");
+        location.reload();
+        return;
+    }
+
+    function gather(k, target) {
+        if (k === 0)
+            return;
+        if (where[k] === target) {          
+            gather(k - 1, target);
+            return;
+        }
+        const from = where[k];
+        const via = other(from, target);
+        gather(k - 1, via);                
+        moves.push([from, target]);         
+        hanoi(via, from, target, k - 1);   
+    }
+
+    gather(total, end);
+}
 
 function exHanoi_2(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+
+    function separate(m, from, X, Y, spare) {
+        if (m === 0)
+            return;
+        separate(m - 1, from, Y, spare, X);
+        moves.push([from, X]);                        
+        hanoi(spare, from, X, Math.floor((m - 1) / 2)); 
+    }
+
+    separate(n, A, C, D, B);
 }
 
 function exhanoi_3(A, B, C, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const total = 5 * n;
+    const rodsList = [A, B, C];
+
+    const where = [null];
+    for (let k = 1; k <= total; k++)
+        where.push(((k - 1) % 5) < 3 ? B : A);
+
+    const other = (a, b) => rodsList.find(r => r !== a && r !== b);
+
+    let count = 0, t = C;
+    for (let k = total; k >= 1; k--) {
+        if (where[k] !== t) {
+            count += Math.pow(2, k - 1);
+            t = other(where[k], t);
+        }
+    }
+    if (count > 2500000) {
+        alert("This number needs too many moves (" + count.toLocaleString() + "). Please enter a smaller number.");
+        location.reload();
+        return;
+    }
+
+    function gather(k, target) {
+        if (k === 0)
+            return;
+        if (where[k] === target) {
+            gather(k - 1, target);
+            return;
+        }
+        const from = where[k];
+        const via = other(from, target);
+        gather(k - 1, via);
+        moves.push([from, target]);
+        hanoi(via, from, target, k - 1);
+    }
+
+    gather(total, C);
 }
 
 function exhanoi_4(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const ring = [A, C, B, D];
+
+    function go(m, i, j) {
+        if (m === 0 || i === j)
+            return;
+        if ((j - i + 4) % 4 === 2) {
+            const u = (i + 1) % 4;
+            const v = (i + 3) % 4;               
+            go(m - 1, i, v);                     
+            moves.push([ring[i], ring[u]]);
+            moves.push([ring[u], ring[j]]);
+            go(m - 1, v, j);
+        } else {
+            const z = ((j - i + 4) % 4 === 1) ? (i + 3) % 4 : (i + 1) % 4;
+            go(m - 1, i, z);
+            moves.push([ring[i], ring[j]]);
+            go(m - 1, z, j);
+        }
+    }
+
+    go(n, 0, 1);   
 }
 
 function exhanoi_5(A, B, C, D, n) {
-    alert("your function is not complete")
-    return
+    n = Number(n);
+    const line = [A, B, C, D];
+
+    // move m disks from rod i to rod j
+    function go(m, i, j) {
+        if (m === 0 || i === j)
+            return;
+        const dir = j > i ? 1 : -1;
+        let tower = i;                          
+        for (let p = i; p !== j; p += dir) {
+            const q = p + dir;
+            if (m > 1) {
+                let park = -1;
+                for (let r = 0; r < 4; r++) {
+                    if (r === p || r === q)
+                        continue;
+                    if (park === -1 || Math.abs(r - tower) < Math.abs(park - tower))
+                        park = r;
+                }
+                go(m - 1, tower, park);
+                tower = park;
+            }
+            moves.push([line[p], line[q]]);
+        }
+        go(m - 1, tower, j);                
+    }
+
+    go(n, 0, 3);   // A ----> D
 }
 
 function moveDisks(from, to){
@@ -325,4 +460,3 @@ exHanoi5.addEventListener("click", () => {
     exhanoi_5("A", "B", "C", "D", number);
     console.log(`Number Of Moves : ${moves.length}`);
 });
-
